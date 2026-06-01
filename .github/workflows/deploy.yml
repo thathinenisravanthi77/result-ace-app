@@ -30,15 +30,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-        env:
-          NITRO_PRESET: github-pages
+      - name: Build static site
+        run: npm run build:gh-pages
+
+      - name: Add .nojekyll
+        run: touch dist-gh-pages/.nojekyll
+
+      - name: Fix asset paths in index.html
+        run: sed -i 's|/result-ace-app/|/result-ace-app/|g' dist-gh-pages/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .output/public
+          path: dist-gh-pages
 
   deploy:
     environment:
